@@ -5,21 +5,23 @@ using System.Collections.Generic;
 public class CustomClothSimulator : MonoBehaviour
 {
     [Header("Mesh Settings")]
-    [Range(2, 50)] public int segmentsX = 20;
-    [Range(2, 50)] public int segmentsY = 20;
-    public float width = 4f;
-    public float height = 4f;
-    public Material clothMaterial;
+    [Range(2, 50)]
+    [SerializeField] private int segmentsX = 20;
+    [Range(2, 50)]
+    [SerializeField] private int segmentsY = 20;
+    [SerializeField] private float width = 4f;
+    [SerializeField] private float height = 4f;
+    [SerializeField] private Material clothMaterial;
 
     [Header("Physics Settings")]
-    public Vector3 gravity = new Vector3(0, -9.81f, 0);
+    [SerializeField] private Vector3 gravity = new Vector3(0, -9.81f, 0);
     [Range(0f, 1f)] public float damping = 0.05f;       // Simulates air resistance
     [Range(0.1f, 1f)] public float springStiffness = 1f; // How rigid the connections are
     [Range(1, 10)] public int solverIterations = 3;     // More iterations = better stability and collision
 
     [Header("Collisions")]
-    public List<SphereCollider> sphereColliders;
-    public bool enableSelfCollision = true;
+    [SerializeField] private List<SphereCollider> sphereColliders;
+    [SerializeField] private bool enableSelfCollision = true;
     [Range(0.01f, 0.2f)] public float selfCollisionRadius = 0.1f; // Minimum distance between cloth particles
 
     private Mesh _mesh;
@@ -219,12 +221,12 @@ public class CustomClothSimulator : MonoBehaviour
         if (distSq < minDist * minDist && distSq > 0.000001f)
         {
             float dist = Mathf.Sqrt(distSq);
-            
+
             // Amount to push each particle
-            float push = 0.5f * (minDist - dist); 
-            
+            float push = 0.5f * (minDist - dist);
+
             // Normalized direction * push amount
-            Vector3 correction = diff / dist * push; 
+            Vector3 correction = diff / dist * push;
 
             if (!p1.isPinned) p1.position += correction;
             if (!p2.isPinned) p2.position -= correction;
