@@ -79,22 +79,22 @@ Shear springs connect diagonal neighbors in the grid. Their purpose is to:
 
 Each spring enforces its rest length using positional corrections. If one particle is pinned, the full correction is applied to the free particle. This prevents energy loss near fixed constraints and improves realism.
 
-The solver runs **multiple iterations per frame**, gradually converging toward constraint satisfaction.
+The solver runs multiple iterations per frame, gradually converging toward constraint satisfaction.
 
 ---
 
-## 6. Solver Architecture (Position-Based Dynamics)
+## 6. Architecture - Position-Based Dynamics
 
 The simulation follows a **Position-Based Dynamics (PBD)** approach:
 
-1. Apply external forces (gravity)
+1. Apply external forces (The gravity)
 2. Integrate particle positions (Verlet)
 3. Iteratively solve constraints:
    - Spring constraints
-   - External collisions
+   - External collisions (sphere)
    - Self-collisions
 
-Increasing the number of solver iterations improves stiffness and collision robustness at the cost of performance.
+Increasing the number of solver iterations improves (in theory) stiffness and collision robustness at the cost of performance.
 
 ---
 
@@ -109,11 +109,11 @@ Collision with spheres is implemented by:
 
 A small collision margin is added to reduce visual clipping.
 
-This collision handling is executed inside the solver loop, ensuring stability and reducing tunneling effects.
+This collision handling is executed inside the solver loop, trying to ensure stability and reduce tunneling effects.
 
 ### 7.2 Self-Collision
 
-Self-collision prevents the cloth from intersecting itself. A naive O(n²) approach is too expensive, so **spatial hashing** is used.
+Self-collision prevents the cloth from intersecting itself. A naive O(n²) approach is too expensive, so spatial hashing is used.
 
 #### Spatial Hashing
 
@@ -127,27 +127,26 @@ This reduces computational complexity to near-linear time and allows real-time s
 
 ## 8. Mesh Generation and Rendering
 
-The cloth mesh is generated procedurally at runtime:
+The cloth mesh is generated procedurally when playmode is activated:
 - Vertices correspond to particles
 - Triangles and UVs are created once during initialization
 - Vertex positions are updated every frame
 
-`Mesh.MarkDynamic()` is used to inform Unity that the mesh will be updated frequently, improving performance.
+`Mesh.MarkDynamic()` is used to inform Unity that the mesh will be updated frequently, so it will improving performance.
 
 ---
 
 ## 9. Results and Observations
 
 The final system demonstrates:
-- Stable hanging cloth behavior
-- Realistic deformation under gravity
-- Robust collision with spheres
-- Effective self-collision prevention
+- A stable-ish hanging cloth behavior
+- Deformation under gravity
+- Collision with spheres
+- Self-collision prevention
 
 Limitations include:
-- No advanced bending constraints
-- No continuous collision detection (CCD)
-- No interaction with arbitrary mesh colliders
+- Tunneling still happens. The sphere passes through the cloth when it's in a high speed.
+- Bad perfomance when the cloth is big.  
 
 Despite these limitations, the system successfully demonstrates the fundamental principles of cloth simulation.
 
@@ -155,9 +154,9 @@ Despite these limitations, the system successfully demonstrates the fundamental 
 
 ## 10. Conclusion
 
-This project demonstrates that a functional and stable cloth simulation can be implemented from scratch using relatively simple techniques when grounded in correct physical and numerical principles.
+The project is a solid basic custom cloth simulator, but with some flaws as mentioned before.
 
-The use of Verlet integration, iterative constraint solving, and spatial hashing shows clear research effort and understanding of real-time simulation techniques, fulfilling the academic objectives of the assignment.
+It's a big topic that has a lot of ways to implement, and it is not easy to do it! There's a lot of information online, but it need to be well filtered.  
 
 ---
 
