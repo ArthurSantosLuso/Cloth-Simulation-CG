@@ -20,7 +20,6 @@ The project focuses on:
 
 ---
 
-
 ## 2. Related Work and Research
 
 There are many ways to implement cloth simulation; among the most common are mass-spring system and position-based dynamics (PBD) techniques. The mass-spring system technique was chosen for this project because it is "simpler" and much more widely used in games. Some of the primary sources:<br>
@@ -161,9 +160,6 @@ It's a big topic that has a lot of ways to implement, and it is not easy to do i
 ---
 
 ## 11. Bibliography
-
-- Jakobsen, T. (2001). *Advanced Character Physics*. GDC.
-  https://www.gdcvault.com/play/1020615/Advanced-Character-Physics
 
 - Müller, M., Heidelberger, B., Hennix, M., & Ratcliff, J. (2007). *Position Based Dynamics*. Journal of Visual Communication and Image Representation.
   https://matthias-research.github.io/pages/publications/posBasedDyn.pdf
