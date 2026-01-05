@@ -1,44 +1,47 @@
 using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.UIElements.Experimental;
 
 /// <summary>
-/// Represents a spring constraint between TWO cloth particle.
-/// Tries to keep particles close to their rest lenght.
+/// Represents a constraint between two particles.
+/// Responsible for maintaining the correct distance between them.
 /// </summary>
-public class ClothSpring : MonoBehaviour
+public class ClothSpring
 {
-    public ClothParticle particleA;
-    public ClothParticle particleB;
+    private ClothParticle _p1;
+    private ClothParticle _p2;
+    private float _restLength;
 
-    public float restLenght;
-    public float stiffness;
-
-    public ClothSpring(ClothParticle a, ClothParticle b, float stiffness)
+    public ClothSpring(ClothParticle p1, ClothParticle p2)
     {
-        particleA = a;
-        particleB = b;
-        restLenght = Vector3.Distance(a.position, b.position);
-        this.stiffness = stiffness;
+        _p1 = p1;
+        _p2 = p2;
+        _restLength = Vector3.Distance(p1.position, p2.position);
     }
 
-    /// <summary>
-    /// Enforces the distance constraint between the two particles.
-    /// </summary>
-    public void ApplyConstrains()
+    public void Resolve(float stiffness)
     {
-        Vector3 delta = particleB.position - particleA.position;
-        float currentLenght = delta.magnitude;
+        Vector3 delta = _p2.position - _p1.position;
+        float currentDist = delta.magnitude;
 
-        if (currentLenght == 0) return;
+        // Prevent division by zero and unnecessary processing
+        if (currentDist < 0.00001f) return;
 
-        float difference = (currentLenght - restLenght) / currentLenght;
-        Vector3 correction = delta * 0.5f * stiffness * difference;
+        float error = (currentDist - _restLength) / currentDist;
 
-        if (!particleA.isFixed)
-            particleA.position += correction;
+        // Correction movement (half for each side)
+        Vector3 correction = delta * 0.5f * error * stiffness;
 
-        if (!particleB.isFixed)
-            particleB.position -= correction;
+        if (!_p1.isPinned && !_p2.isPinned)
+        {
+            _p1.position += correction;
+            _p2.position -= correction;
+        }
+        else if (!_p1.isPinned)
+        {
+            _p1.position += correction * 2f;
+        }
+        else if (!_p2.isPinned)
+        {
+            _p2.position -= correction * 2f;
+        }
     }
 }

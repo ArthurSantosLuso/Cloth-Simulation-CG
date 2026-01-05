@@ -1,49 +1,45 @@
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 /// <summary>
-/// Represents a single mass point in the cloth.
-/// Uses Verlet integration for real-time physics.
+/// Represents a single point in the cloth mesh - Particle.
+/// Responsible only for storing position and handling Verlet integration.
 /// </summary>
+[System.Serializable]
 public class ClothParticle
 {
     public Vector3 position;
-    public Vector3 previousPosition;
-    public Vector3 acceleration;
+    public Vector3 prevPosition;
+    public Vector3 originalPos;
+    public bool isPinned;
 
-    public float mass;
-    public bool isFixed;
+    private Vector3 _acceleration;
 
-    public ClothParticle(Vector3 startPosition, float mass, bool isFixed = false)
+    public ClothParticle(Vector3 pos, bool isPinned)
     {
-        position = startPosition;
-        previousPosition = startPosition;
-        acceleration = Vector3.zero;
-        this.mass = mass;
-        this.isFixed = isFixed;
+        position = pos;
+        prevPosition = pos;
+        originalPos = pos;
+        this.isPinned = isPinned;
+        _acceleration = Vector3.zero;
     }
 
-    /// <summary>
-    /// Adds a force to the particle
-    /// </summary>
     public void AddForce(Vector3 force)
     {
-        acceleration += force / mass;
+        _acceleration += force;
     }
 
     /// <summary>
-    /// Verlet is applied here.
+    /// Verlet Integration - moves the particle based on inertia (pos - prevPos).
     /// </summary>
-    public void UpdateParticle(float deltaTime)
+    public void TimeStep(float dt, float damping)
     {
-        if (isFixed) return;
+        if (isPinned) return;
 
-        Vector3 velocity = position - previousPosition;
-        Vector3 newPosition = position + velocity + acceleration * Mathf.Pow(deltaTime, 2);
+        Vector3 velocity = (position - prevPosition) * (1f - damping);
+        Vector3 nextPos = position + velocity + _acceleration * (dt * dt);
 
-        previousPosition = position;
-        position = newPosition;
-        acceleration = Vector3.zero;
+        prevPosition = position;
+        position = nextPos;
+        _acceleration = Vector3.zero; // Reset acceleration for next frame
     }
 }
